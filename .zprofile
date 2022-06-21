@@ -18,8 +18,8 @@ export AWS_PAGER=""
 #if command -v pyenv 1>/dev/null 2>&1; then
 #  eval "$(pyenv init -)"
 #fi
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
+#eval "$(pyenv init --path)"
+#eval "$(pyenv init -)"
 
 # 仮想環境をpipenvしたディレクトリ配下に作成する
 export PIPENV_VENV_IN_PROJECT=true

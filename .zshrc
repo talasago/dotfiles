@@ -1,3 +1,8 @@
+# 権限エラーを握りつぶす
+# wslだとchmod 755が効かなかった
+export ZSH_DISABLE_COMPFIX=true
+
+
 ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="agnoster"
 plugins=(
@@ -5,9 +10,9 @@ plugins=(
     zsh-syntax-highlighting
     zsh-autosuggestions
 )
+
 source $ZSH/oh-my-zsh.sh
-PROMPT='%{%f%b%k%}$(build_prompt)
-> '
+
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
@@ -58,7 +63,7 @@ alias ggrep='git grep'
 stty stop undef
 
 # macの場合
-if [ "$(uname)" = "Darwin" ]; then
+if [[ "$(uname)" = "Darwin" ]]; then
 
   # コマンド履歴に重複を記録しない
   setopt hist_ignore_dups
@@ -95,6 +100,30 @@ if [ "$(uname)" = "Darwin" ]; then
   # nodeenv
   #export PATH="$HOME/.nodenv/bin:$PATH"
   #eval "$(nodenv init -)"
+elif [[ "$(uname -r | grep -i 'WSL2')" != "" ]]; then
+  # windons
+
+  # ディレクトリの色変更
+  eval $(dircolors -b ~/.dircolors)
+
+  # zshの補完候補をlsの結果の色と同じにする
+  autoload -U compinit
+  compinit
+  zstyle ':completion:*' list-colors "${LS_COLORS}"
+
+  alias l.='ls -d .* --color=auto'
+  alias ll='ls -l --color=auto'
+  alias ls='ls --color=auto'
+  alias ld='ls -ldG */'
+
+  #別シェルと履歴共有
+  function share_history {
+     history -a
+     history -c
+     history -r
+  }
+  PROMPT_COMMAND='share_history'
+
 else
   alias l.='ls -d .* --color=auto'
   alias ll='ls -l --color=auto'
