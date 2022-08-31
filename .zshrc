@@ -13,6 +13,8 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+PROMPT='%{%f%b%k%}$(build_prompt)
+> '
 
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
