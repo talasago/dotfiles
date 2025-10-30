@@ -78,3 +78,10 @@ function! s:remove_dust()
   unlet cursor
 endfunction
 " autocmd BufWritePre * call <SID>remove_dust()
+
+
+" diffの時に色を見やすく
+highlight DiffAdd    cterm=bold ctermfg=10 ctermbg=22
+highlight DiffDelete cterm=bold ctermfg=10 ctermbg=52
+highlight DiffChange cterm=bold ctermfg=10 ctermbg=17
+highlight DiffText   cterm=bold ctermfg=10 ctermbg=21
