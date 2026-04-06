@@ -31,8 +31,6 @@ alias dck='docker'
 alias dckc='docker-compose'
 
 
-vim_version=`vim --version | head -1 | sed 's/^.*\ \([0-9]\)\.\([0-9]\)\ .*$/\1\2/'`
-alias less='/usr/share/vim/vim${vim_version}/macros/less.sh'
 
 alias g='git'
 alias gst='git status'
@@ -56,6 +54,7 @@ alias glogn='git log --name-status --oneline'
 alias gfirstcom='git commit --allow-empty -m \"Initial commit\"'
 alias gpl='git pull'
 alias gps='git push'
+alias gpsfo='git push --force-with-lease'
 alias gad='git add'
 alias gdif='git diff'
 alias gdift='git difftool'
@@ -139,3 +138,51 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 . "$HOME/.local/bin/env"
+
+#https://qiita.com/mikan3rd/items/d41a8ca26523f950ea9d
+# git-promptの読み込み
+source ~/.zsh/git-prompt.sh
+
+# git-completionの読み込み
+fpath=(~/.zsh $fpath)
+zstyle ':completion:*:*:git:*' script ~/.zsh/git-completion.bash
+autoload -Uz compinit && compinit
+
+# プロンプトのオプション表示設定
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUPSTREAM=auto
+
+
+# Claude Code: Generate commit message and copy to clipboard
+ggc() {
+    if ! git diff --cached --quiet 2>/dev/null; then
+        local diff_content
+        diff_content=$(git diff --cached)
+        echo "Generating commit message..."
+
+        local commit_msg
+        commit_msg=$(claude -p "Generate a concise conventional commit message for this git diff.
+Requirements:
+- Using English
+- Format: type: description (e.g., 'feat: add user login', 'fix: resolve null pointer error')
+- Types: feat, fix, refactor, docs, test, chore, style, perf
+- Keep it under 72 characters
+- Output ONLY the commit message text, no markdown formatting, no code blocks, no explanation
+
+Git diff:
+${diff_content}" --output-format text | sed 's/```//g' | grep -v '^[[:space:]]*$' | head -1 | xargs)
+
+        if [[ -z "$commit_msg" || "$commit_msg" == "\`\`\`" ]]; then
+            echo "✗ Failed to generate commit message"
+            return 1
+        fi
+
+        echo "${commit_msg}" | pbcopy
+        echo "✓ Copied to clipboard: ${commit_msg}"
+    else
+        echo "No staged changes found."
+    fi
+}
+
