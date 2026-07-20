@@ -1,0 +1,5 @@
+{
+  "claudeMdExcludes": [
+    "${{project_root}}/.claude/rules/git-workflow.md"
+  ]
+}
