@@ -17,6 +17,7 @@
 - GitHub Actions の `uses:` 追加・変更時 → `.github-actions.md`ルール
 - Issue等が `claude.ai/design` のデザインURLを参照しているとき → `/design-mockup` スキル
 - GitHub Issue を作成するとき → `/create-issue` スキル
+- 依存ライブラリのインストール時 → `/install-dependencies` スキル
 - パッケージマネージャーを使用してライブラリを更新するとき → `/dependency-management.md` ルール
 
 ## 着手前の調査・要件確認
