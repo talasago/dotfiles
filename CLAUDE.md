@@ -12,5 +12,8 @@
 
 ---
 ## 詳細ルールの参照トリガー
-- テスト新規作成・修正時 → `/write-test` スキル
-実装を変更した場合は、関連するテストの追加・修正が必要か確認する。
+- テスト新規作成・修正時 → `/write-test` スキル 
+  - 実装を変更した場合は、関連するテストの追加・修正が必要か確認する。
+- GitHub Actions の `uses:` 追加・変更時 → `.claude/rules/github-actions.md`
+- Issue等が `claude.ai/design` のデザインURLを参照しているとき → `/design-mockup` スキル
+- GitHub Issue を作成するとき → `/create-issue` スキル
