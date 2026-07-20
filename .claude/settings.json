@@ -1,0 +1,12 @@
+{
+  "language": "japanese",
+  "attribution": {
+    "commit": ""
+  },
+  "permissions": {
+    "deny": [
+    ]
+  },
+  "hooks": {
+  }
+}
