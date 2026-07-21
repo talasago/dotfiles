@@ -6,9 +6,9 @@
 このファイルは Codex Remote 用の薄いルーターです。詳細なルール、サブエージェント、
 スキルの本文は、Claude Code と共有する次のディレクトリに一元化されています。
 
-- 詳細ルール: `~/.claude/rules/`
-- サブエージェント: `~/.claude/agents/`
-- スキル: `~/.claude/skills/`
+- 詳細ルール: `~/.claude/rules/` 、`${project_repository_root}/.claude/rules/`
+- サブエージェント: `~/.claude/agents/`、、`${project_repository_root}/.claude/agents/`
+- スキル: `~/.claude/skills/`、`${project_repository_root}/.claude/skills/`
 
 ## 具体的なRule routing
 
