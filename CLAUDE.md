@@ -118,6 +118,7 @@ PR作成後のCI失敗・レビューコメントへの反応は必要だが、*
 
 ## Git運用
 ### PC上での場合
+Claude code や codex などのweb版には適用しないルール
 - commit / push はユーザーが明示的に指示した場合のみ実行する。指示がなければ絶対にやらない
   - 「コミットまでして」→ commit OK、push NG
   - 「pushして」→ push OK
