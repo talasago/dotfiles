@@ -3,10 +3,11 @@
   "attribution": {
     "commit": ""
   },
-  "permissions": {
-    "deny": [
-    ]
-  },
-  "hooks": {
-  }
+  "model": "sonnet",
+  "alwaysThinkingEnabled": true,
+  "theme": "dark-daltonized",
+  "verbose": true,
+  "preferredNotifChannel": "terminal_bell",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true
 }
