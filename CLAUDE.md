@@ -19,6 +19,7 @@
 - パッケージマネージャーを使用してライブラリを更新するとき → `/dependency-management.md` ルール
 - スキル新規作成時 → `.skills-management.md` ルール
 - ドキュメント（docs/配下・README・CLAUDE.md等）を追加・更新するとき → `/update-docs` スキル
+- Playwright等でアプリ画面をスクリーンショット撮影するとき → `/playwright-screenshot` スキル
 
 ## 着手前の調査・要件確認
 
