@@ -17,6 +17,7 @@
 - `package.json`、`pnpm-lock.yaml`、`package-lock.json`、`yarn.lock`、`Gemfile`、`Gemfile.lock` → `.claude/rules/dependency-management.md`
 - `.github/workflows/**` → `.claude/rules/github-actions.md`
 - `.claude/skills/**` → `.claude/rules/skills-management.md`
+- `**/router.tsx`、`**/router.ts`、`**/routes.tsx`、`**/routes.ts` → `.claude/rules/react-router.md`
 
 一致するものがなければ、ルールファイル・エージェント・スキルは読みません。
 複数一致する場合は、該当するものをすべて読みます。
