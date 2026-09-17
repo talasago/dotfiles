@@ -24,6 +24,7 @@
 - 実装済みの差分の大部分を取り消すとき → `/revert-large-diff` スキル
 - バグ報告が複数の原因仮説を挙げているとき → `/multi-hypothesis-bugfix` スキル
 - 投稿済みのGitHub Issueコメント・PRコメント・Issue本文がまずかったと気づいたとき → `/recreate-comment` スキル
+- グローバル設定（CLAUDE.md・`.claude/rules/`・`.claude/skills/`）を変更するとき → `/update-dotfiles` スキル
 
 ## 着手前の調査・要件確認
 
