@@ -9,5 +9,18 @@
   "verbose": true,
   "preferredNotifChannel": "terminal_bell",
   "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-test-skill.sh"
+          }
+        ]
+      }
+    ]
+  }
 }
