@@ -12,7 +12,11 @@ allowed-tools: Read Grep Glob
 ## 観点
 
 - SOLID：5原則すべて
-- デザインパターン：Observer・Decorator・Facade・Proxy・Command・State・Composite・Singleton・Chain of Responsibility
+- デザインパターン：
+  - GoF：Observer・Decorator・Facade・Proxy・Command・State・Composite・Singleton・Chain of Responsibility
+  - PoEAA（Martin Fowler『Patterns of Enterprise Application Architecture』）：Active Record・Data Mapper・Repository・Service Layer・Unit of Work・Gateway・Lazy Load・Data Transfer Object・Value Object
+  - その他：Dependency Injection・Null Object
+  - 理由を書くときは、どのカタログの定義に基づくかを示す
   - フレームワークが提供している仕組みがパターンの実例になっている場合も挙げる（例：Rails のコールバックや Django のシグナルは Observer、Rack や Django のミドルウェアは Chain of Responsibility）
 - React のコードでは、関数コンポーネントとフックは読み飛ばし、そこから使われるクラスベースのコード（APIクライアント・ストア・ドメインモデル等）を見る
 
