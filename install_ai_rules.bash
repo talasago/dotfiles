@@ -219,7 +219,7 @@ merge_local_claude_settings() {
     error "Claude Code設定をマージできません: $destination"
   }
 
-  chmod 600 -- "$temporary_settings" ||
+  chmod 600 "$temporary_settings" ||
     error "Claude Code設定の権限を変更できません: $temporary_settings"
   mv -- "$temporary_settings" "$destination" ||
     error "Claude Code設定を更新できません: $destination"
