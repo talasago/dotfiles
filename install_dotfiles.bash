@@ -55,11 +55,3 @@ for name in "${DOTFILES[@]}"; do
     error "シンボリックリンクを作成できません: $destination"
   printf 'リンクを作成しました: %s\n' "$destination"
 done
-
-command -v npm >/dev/null 2>&1 ||
-  error 'npm が必要です。ccstatusline をインストールするため、Node.js をインストールしてから再実行してください。'
-
-if ! command -v ccstatusline >/dev/null 2>&1; then
-  npm install -g ccstatusline ||
-    error 'ccstatusline をインストールできません。'
-fi
