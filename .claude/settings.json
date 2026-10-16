@@ -10,6 +10,11 @@
   "preferredNotifChannel": "terminal_bell",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
+  "statusLine": {
+    "type": "command",
+    "command": "ccstatusline",
+    "padding": 0
+  },
   "hooks": {
     "PreToolUse": [
       {
