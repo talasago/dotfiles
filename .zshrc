@@ -22,15 +22,16 @@ alias fgrep='fgrep --color=auto'
 alias tma='tmux a -t'
 alias tmn='tmux new -s'
 alias tm='tmux'
+alias hd='herdr'
 
 alias vi='vim'
 alias ..='cd ..'
 alias h='history'
 
-alias dck='docker'
-alias dckc='docker-compose'
+#alias dck='docker'
+#alias dckc='docker-compose'
 
-
+alias dc='devcontainer'
 
 alias g='git'
 alias gst='git status'
