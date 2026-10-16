@@ -1,0 +1,29 @@
+onboarding = false
+
+[theme]
+name = "solarized"
+
+[keys]
+prefix = "ctrl+q"
+
+# tmuxのprefix+rをリロードに割り当てるため、リサイズモードを退避
+reload_config = "prefix+r"
+resize_mode = "prefix+shift+r"
+
+split_vertical = "prefix+|"
+
+focus_pane_left = ["prefix+h", "prefix+left"]
+focus_pane_down = ["prefix+j", "prefix+down"]
+focus_pane_up = ["prefix+k", "prefix+up"]
+focus_pane_right = ["prefix+l", "prefix+right"]
+
+previous_tab = "prefix+ctrl+h"
+next_tab = "prefix+ctrl+l"
+
+resize_pane_left = "prefix+shift+h"
+resize_pane_down = "prefix+shift+j"
+resize_pane_up = "prefix+shift+k"
+resize_pane_right = "prefix+shift+l"
+
+[ui]
+tab_bar_right = [{ type = "datetime", format = "[%Y-%m-%d(%a) %H:%M]" }]
