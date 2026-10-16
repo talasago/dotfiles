@@ -5,6 +5,7 @@ set -euo pipefail
 readonly PROGRAM_NAME=${BASH_SOURCE[0]##*/}
 
 readonly DOTFILES=(
+  .config/ccstatusline
   .tmux.conf
   .vimrc
   .zprofile
@@ -28,7 +29,7 @@ for name in "${DOTFILES[@]}"; do
   source_path=$SCRIPT_DIR/$name
   destination=$HOME/$name
 
-  [[ -f $source_path ]] || error "入力ファイルがありません: $source_path"
+  [[ -e $source_path ]] || error "入力ファイルがありません: $source_path"
 
   if [[ -L $destination ]]; then
     [[ $(readlink "$destination") = "$source_path" ]] ||
@@ -48,7 +49,17 @@ fi
 for name in "${DOTFILES[@]}"; do
   destination=$HOME/$name
   [[ -L $destination ]] && continue
+  mkdir -p -- "$(dirname -- "$destination")" ||
+    error "出力ディレクトリを作成できません: $destination"
   ln -s -- "$SCRIPT_DIR/$name" "$destination" ||
     error "シンボリックリンクを作成できません: $destination"
   printf 'リンクを作成しました: %s\n' "$destination"
 done
+
+command -v npm >/dev/null 2>&1 ||
+  error 'npm が必要です。ccstatusline をインストールするため、Node.js をインストールしてから再実行してください。'
+
+if ! command -v ccstatusline >/dev/null 2>&1; then
+  npm install -g ccstatusline ||
+    error 'ccstatusline をインストールできません。'
+fi
