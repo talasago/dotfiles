@@ -6,6 +6,7 @@ readonly PROGRAM_NAME=${BASH_SOURCE[0]##*/}
 
 readonly DOTFILES=(
   .config/ccstatusline
+  .config/herdr/config.toml
   .tmux.conf
   .vimrc
   .zprofile
