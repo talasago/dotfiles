@@ -37,6 +37,8 @@ readonly SCRIPT_DIR
 readonly SOURCE_ROOT=$SCRIPT_DIR/.claude
 readonly CLAUDE_ENTRY_SOURCE=$SCRIPT_DIR/CLAUDE.md
 readonly CODEX_ENTRY_SOURCE=$SCRIPT_DIR/AGENTS.md
+# git-workflow.md は Claude Code on the web 専用。cloud では読ませる必要があるため、local の user 設定にだけ除外を入れる。
+readonly LOCAL_ONLY_CLAUDE_SETTINGS='{"claudeMdExcludes":["**/.claude/rules/git-workflow.md"]}'
 
 environment=''
 target=''
@@ -190,31 +192,31 @@ require_jq() {
 
 merge_local_claude_settings() {
   local destination=$HOME/.claude/settings.json
+  local existing_settings=$destination
   local temporary_settings
 
-  if [[ ! -e $destination && ! -L $destination ]]; then
-    cp -L -- "$SOURCE_ROOT/settings.json" "$destination" ||
-      error "Claude Code設定をコピーできません: $destination"
-    return 0
-  fi
-
   require_jq
+  [[ -e $destination || -L $destination ]] || existing_settings=/dev/null
   temporary_settings=$(mktemp "$HOME/.claude/settings.json.tmp.XXXXXX") ||
     error 'Claude Code設定用の一時ファイルを作成できません。'
 
-  jq -s '
+  jq -s --argjson local_only "$LOCAL_ONLY_CLAUDE_SETTINGS" '
     .[0] + (
-      .[1]
+      (.[1] // {})
       | with_entries(
           select(
             .key == "extraKnownMarketplaces" or
             .key == "enabledPlugins" or
             .key == "statusLine" or
-            .key == "env"
+            .key == "env" or
+            .key == "model" or
+            .key == "modelSettings" or
+            .key == "voice" or
+            .key == "voiceEnabled"
           )
         )
-    )
-  ' "$SOURCE_ROOT/settings.json" "$destination" >"$temporary_settings" || {
+    ) + $local_only
+  ' "$SOURCE_ROOT/settings.json" "$existing_settings" >"$temporary_settings" || {
     rm -f -- "$temporary_settings"
     error "Claude Code設定をマージできません: $destination"
   }
