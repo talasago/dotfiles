@@ -60,8 +60,16 @@ test_local_all_installs_claude_and_codex_links() {
     "$test_home/.claude/agents/research.md"
   assert_regular_file "$test_home/.claude/skills/local-only/SKILL.md"
   assert_regular_file "$test_home/.claude/settings.json"
-  cmp -s "$REPOSITORY_ROOT/.claude/settings.json" "$test_home/.claude/settings.json" ||
-    fail '共通のClaude Code設定がコピーされていません。'
+  node -e '
+    const fs = require("fs");
+    const shared = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+    const installed = JSON.parse(fs.readFileSync(process.argv[2], "utf8"));
+    const excludes = installed.claudeMdExcludes;
+    delete installed.claudeMdExcludes;
+    if (JSON.stringify(installed) !== JSON.stringify(shared)) process.exit(1);
+    if (JSON.stringify(excludes) !== JSON.stringify(["**/.claude/rules/git-workflow.md"])) process.exit(1);
+  ' "$REPOSITORY_ROOT/.claude/settings.json" "$test_home/.claude/settings.json" ||
+    fail '共通のClaude Code設定とlocal専用の除外設定が配置されていません。'
   assert_absent "$test_home/.claude/settings.local.json"
 }
 
@@ -85,7 +93,7 @@ test_local_claude_preserves_local_settings() {
   test_home=$(new_home)
   mkdir -p -- "$test_home/.claude"
   printf '%s\n' \
-    '{"model":"opus","statusLine":{"type":"command","command":"~/.claude/local-statusline.js"},"extraKnownMarketplaces":{"local":{"source":{"source":"github","repo":"example/local"}}},"enabledPlugins":{"local@example":true},"env":{"LOCAL_TOKEN":"secret"},"untrackedSetting":true}' \
+    '{"model":"opus","modelSettings":{"claude-opus-5-5":{"effortLevel":"high"}},"voice":{"enabled":true,"mode":"hold"},"voiceEnabled":true,"statusLine":{"type":"command","command":"~/.claude/local-statusline.js"},"extraKnownMarketplaces":{"local":{"source":{"source":"github","repo":"example/local"}}},"enabledPlugins":{"local@example":true},"env":{"LOCAL_TOKEN":"secret"},"untrackedSetting":true}' \
     >"$test_home/.claude/settings.json"
 
   PATH="$REPOSITORY_ROOT/tests/fixtures/bin:$PATH" \
@@ -97,16 +105,43 @@ test_local_claude_preserves_local_settings() {
   node -e '
     const fs = require("fs");
     const settings = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
-    if (settings.model !== "sonnet") process.exit(1);
+    if (settings.model !== "opus") process.exit(1);
+    if (settings.modelSettings["claude-opus-5-5"].effortLevel !== "high") process.exit(1);
+    if (settings.voice.mode !== "hold") process.exit(1);
+    if (settings.voiceEnabled !== true) process.exit(1);
     if (settings.language !== "japanese") process.exit(1);
     if (settings.statusLine.command !== "~/.claude/local-statusline.js") process.exit(1);
     if (settings.enabledPlugins["local@example"] !== true) process.exit(1);
     if (settings.env.LOCAL_TOKEN !== "secret") process.exit(1);
     if (settings.extraKnownMarketplaces.local.source.repo !== "example/local") process.exit(1);
+    if (settings.claudeMdExcludes[0] !== "**/.claude/rules/git-workflow.md") process.exit(1);
     if ("untrackedSetting" in settings) process.exit(1);
   ' "$test_home/.claude/settings.json" ||
     fail '共通設定と端末固有設定が正しくマージされていません。'
   assert_absent "$test_home/.codex/AGENTS.md"
+}
+
+test_local_claude_uses_shared_settings_when_local_keys_are_absent() {
+  local test_home
+  test_home=$(new_home)
+  mkdir -p -- "$test_home/.claude"
+  printf '%s\n' '{"untrackedSetting":true}' >"$test_home/.claude/settings.json"
+
+  PATH="$REPOSITORY_ROOT/tests/fixtures/bin:$PATH" \
+    HOME=$test_home \
+    "$INSTALLER" --environment local --target claude >/dev/null
+
+  node -e '
+    const fs = require("fs");
+    const settings = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+    if (settings.model !== "sonnet") process.exit(1);
+    if (settings.statusLine.command !== "ccstatusline") process.exit(1);
+    if ("modelSettings" in settings) process.exit(1);
+    if ("voice" in settings) process.exit(1);
+    if ("voiceEnabled" in settings) process.exit(1);
+    if ("untrackedSetting" in settings) process.exit(1);
+  ' "$test_home/.claude/settings.json" ||
+    fail '端末固有設定が無い場合に共通設定がそのまま使われていません。'
 }
 
 test_local_reinstall_is_idempotent() {
@@ -190,6 +225,8 @@ test_cloud_all_copies_regular_files() {
     fail 'cloud の再実行でコピー内容が更新されていません。'
   assert_regular_file "$test_home/.codex/AGENTS.md"
   assert_regular_file "$test_home/.claude/settings.json"
+  ! grep -q claudeMdExcludes "$test_home/.claude/settings.json" ||
+    fail 'cloud の設定に local 専用の claudeMdExcludes が含まれています。'
   assert_regular_file "$test_home/.claude/rules/github-actions.md"
   assert_absent "$test_home/.claude/settings.local.json"
 }
@@ -235,6 +272,7 @@ test_error_uses_invoked_program_name() {
 test_local_all_installs_claude_and_codex_links
 test_local_codex_does_not_install_claude_settings
 test_local_claude_preserves_local_settings
+test_local_claude_uses_shared_settings_when_local_keys_are_absent
 test_local_reinstall_is_idempotent
 test_local_collision_does_not_partially_install
 test_local_wrong_link_does_not_partially_install

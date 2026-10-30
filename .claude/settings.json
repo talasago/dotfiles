@@ -4,6 +4,7 @@
     "commit": ""
   },
   "model": "sonnet",
+  "outputStyle": "Simple",
   "alwaysThinkingEnabled": true,
   "theme": "dark-daltonized",
   "verbose": true,

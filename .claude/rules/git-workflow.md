@@ -1,6 +1,6 @@
 # Git 運用（コミット・ブランチ・プッシュ）
 
-このルールは Claude Code on the web の実行環境向け。ローカルPCでは `.claude/settings.local.json`（git未追跡）の `claudeMdExcludes` で本ファイルを除外しているためロードされず、ローカルでのGit運用はユーザーの判断に委ねる。
+このルールは Claude Code on the web の実行環境向け。ローカルPCでは `install_ai_rules.bash --environment local` が `~/.claude/settings.json` に `claudeMdExcludes` を設定して本ファイルを除外しているためロードされず、ローカルでのGit運用はユーザーの判断に委ねる。
 
 ## コミット分割の方針
 
