@@ -22,6 +22,7 @@
 - 実装済みの差分の大部分を取り消すとき → `/revert-large-diff` スキル
 - バグ報告が複数の原因仮説を挙げているとき → `/multi-hypothesis-bugfix` スキル
 - 投稿済みのGitHub Issueコメント・PRコメント・Issue本文がまずかったと気づいたとき → `/recreate-comment` スキル
+- 投稿済みのPR本文・Issue本文・コメントを更新するとき → `/refetch-before-edit-description-pr` スキル
 - コードレビューを行うとき（`/code-review`実行時を含む） → `/report-complexity-diff` スキル
 - グローバル設定（CLAUDE.md・`.claude/rules/`・`.claude/skills/`）を変更するとき → `/update-dotfiles` スキル
 
@@ -43,6 +44,10 @@ Miro・Notion・GitHub Issue等の外部ドキュメントを参照して成果�
 ### 成果物内の情報の重複
 
 成果物を出す前に、既存ドキュメントや同じ成果物内の別の箇所に同じ情報が無いか確認する。重複が見つかったら、参照に置き換えるか両方に残すかをユーザーに尋ねる。
+
+### 成果物内の指示語
+
+PR本文・Issue・ドキュメント等の成果物では、「このステップ」「ここ」「上記」「前述の」のような指示語で対象を指さない。ファイル名・ステップ名・関数名・行番号など、会話の文脈が無くても特定できる名前で書く。
 
 ### 比較表のセルの書き方
 
