@@ -55,6 +55,14 @@ Miro・Notion・GitHub Issue等の外部ドキュメントを参照して成果�
 
 ## Subagentとメインチャットの使い分け
 
+既定はメインチャットで進める。Subagentは以下のいずれかに当たる場合に使う。
+
+- 単一ループでコンテキスト肥大による性能低下が出ている
+- 並列に進める必要があり、終われば捨てられる新しいコンテキストが要る
+- ツール選択に苦労している、またはシステムプロンプトに矛盾する指示がある
+
+出典: [Anthropic「Building agents: When to fold subagents into your main agent loop」](https://claude.com/blog/building-agents-when-to-fold-subagents-into-your-main-agent-loop)（2026-10-22公開、2026-11-23確認）。出典が更新された場合は本セクションも見直す。
+
 ### Subagentを使うとき
 
 - 該当タスクが、メインのコンテキストでは不要な冗長な出力を生成する場合。
