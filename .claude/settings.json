@@ -6,6 +6,9 @@
   "model": "sonnet",
   "outputStyle": "Simple",
   "alwaysThinkingEnabled": true,
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "theme": "dark-daltonized",
   "verbose": true,
   "preferredNotifChannel": "terminal_bell",
