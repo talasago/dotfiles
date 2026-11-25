@@ -121,6 +121,32 @@ test_local_claude_preserves_local_settings() {
   assert_absent "$test_home/.codex/AGENTS.md"
 }
 
+test_local_claude_merges_permissions_with_shared_default_mode() {
+  local test_home
+  test_home=$(new_home)
+  mkdir -p -- "$test_home/.claude"
+  printf '%s\n' \
+    '{"permissions":{"defaultMode":"default","allow":["Bash(gh pr view)"],"deny":["Bash(rm *)"]}}' \
+    >"$test_home/.claude/settings.json"
+
+  PATH="$REPOSITORY_ROOT/tests/fixtures/bin:$PATH" \
+    HOME=$test_home \
+    "$INSTALLER" --environment local --target claude >/dev/null
+
+  node -e '
+    const fs = require("fs");
+    const { permissions } = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+    const expected = {
+      defaultMode: "auto",
+      allow: ["Bash(gh pr view)"],
+      deny: ["Bash(rm *)"],
+    };
+    const sortKeys = (object) => JSON.stringify(object, Object.keys(object).sort());
+    if (sortKeys(permissions) !== sortKeys(expected)) process.exit(1);
+  ' "$test_home/.claude/settings.json" ||
+    fail '端末固有のpermissionsが保持され、defaultModeだけ共通設定で上書きされていません。'
+}
+
 test_local_claude_uses_shared_settings_when_local_keys_are_absent() {
   local test_home
   test_home=$(new_home)
@@ -272,6 +298,7 @@ test_error_uses_invoked_program_name() {
 test_local_all_installs_claude_and_codex_links
 test_local_codex_does_not_install_claude_settings
 test_local_claude_preserves_local_settings
+test_local_claude_merges_permissions_with_shared_default_mode
 test_local_claude_uses_shared_settings_when_local_keys_are_absent
 test_local_reinstall_is_idempotent
 test_local_collision_does_not_partially_install
