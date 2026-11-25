@@ -200,9 +200,13 @@ merge_local_claude_settings() {
   temporary_settings=$(mktemp "$HOME/.claude/settings.json.tmp.XXXXXX") ||
     error 'Claude Code設定用の一時ファイルを作成できません。'
 
+  # permissionsは端末で「今後も許可」したallowルール等が溜まるため、丸ごと置き換えず
+  # 共通設定のキー（defaultMode等）だけを上書きする。
   jq -s --argjson local_only "$LOCAL_ONLY_CLAUDE_SETTINGS" '
-    .[0] + (
-      (.[1] // {})
+    .[0] as $shared
+    | (.[1] // {}) as $existing
+    | $shared + (
+      $existing
       | with_entries(
           select(
             .key == "extraKnownMarketplaces" or
@@ -215,6 +219,12 @@ merge_local_claude_settings() {
             .key == "voiceEnabled"
           )
         )
+    ) + (
+      if $existing.permissions or $shared.permissions then
+        {permissions: (($existing.permissions // {}) + ($shared.permissions // {}))}
+      else
+        {}
+      end
     ) + $local_only
   ' "$SOURCE_ROOT/settings.json" "$existing_settings" >"$temporary_settings" || {
     rm -f -- "$temporary_settings"
