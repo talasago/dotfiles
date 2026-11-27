@@ -24,7 +24,7 @@ environment:
 
 target:
   claude  Claude Code の設定をインストールします。
-  codex   Codex の設定と共有 AI rules をインストールします。
+  codex   Codex の指示と共有スキルをインストールします。
   all     Claude Code と Codex の両方をインストールします。
 EOF
 }
@@ -94,6 +94,7 @@ esac
 [[ -d $SOURCE_ROOT/rules ]] || error "入力ディレクトリがありません: $SOURCE_ROOT/rules"
 [[ -d $SOURCE_ROOT/skills ]] || error "入力ディレクトリがありません: $SOURCE_ROOT/skills"
 
+readonly CODEX_DIRECTORY=${CODEX_HOME:-$HOME/.codex}
 sources=()
 destinations=()
 required_directories=()
@@ -112,25 +113,14 @@ build_install_plan() {
   local relative_path
   local source_path
 
+  append_install_mapping "$CLAUDE_ENTRY_SOURCE" "$HOME/.claude/CLAUDE.md"
+  required_directories+=("$HOME/.claude")
   case $target in
-    claude)
-      append_install_mapping "$CLAUDE_ENTRY_SOURCE" "$HOME/.claude/CLAUDE.md"
-      required_directories[${#required_directories[@]}]=$HOME/.claude
-      ;;
-    codex)
-      append_install_mapping "$CODEX_ENTRY_SOURCE" "$HOME/.codex/AGENTS.md"
-      required_directories[${#required_directories[@]}]=$HOME/.codex
-      required_directories[${#required_directories[@]}]=$HOME/.claude
-      ;;
-    all)
-      append_install_mapping "$CLAUDE_ENTRY_SOURCE" "$HOME/.claude/CLAUDE.md"
-      append_install_mapping "$CODEX_ENTRY_SOURCE" "$HOME/.codex/AGENTS.md"
-      required_directories[${#required_directories[@]}]=$HOME/.claude
-      required_directories[${#required_directories[@]}]=$HOME/.codex
+    codex | all)
+      append_install_mapping "$CODEX_ENTRY_SOURCE" "$CODEX_DIRECTORY/AGENTS.md"
+      required_directories+=("$CODEX_DIRECTORY")
       ;;
   esac
-
-  [[ $environment = local ]] || return 0
 
   while IFS= read -r -d '' relative_path; do
     source_path=$SOURCE_ROOT/${relative_path#./}
@@ -151,27 +141,31 @@ build_install_plan() {
   )
 }
 
+append_codex_skill_mappings() {
+  [[ $target != claude ]] || return 0
+
+  local skill
+  local skill_name
+  local link_source
+  required_directories+=("$HOME/.agents" "$HOME/.agents/skills")
+
+  for skill in "$SOURCE_ROOT"/skills/*; do
+    [[ -f $skill/SKILL.md ]] || continue
+    skill_name=${skill##*/}
+    link_source=$skill
+    if [[ $environment = cloud ]]; then
+      link_source=$HOME/.claude/skills/$skill_name
+    fi
+    append_install_mapping "$link_source" "$HOME/.agents/skills/$skill_name"
+  done
+}
+
 copy_install_items() {
   local index
-  local destination_parent
-
-  for ((index = 0; index < ${#sources[@]}; index += 1)); do
-    destination_parent=$(dirname -- "${destinations[$index]}")
-    mkdir -p -- "$destination_parent" ||
-      error "出力ディレクトリを作成できません: $destination_parent"
-    cp -L -- "${sources[$index]}" "${destinations[$index]}" ||
+  for ((index = 0; index < first_link_index; index += 1)); do
+    cp -RL -- "${sources[$index]}" "${destinations[$index]}" ||
       error "ファイルをコピーできません: ${destinations[$index]}"
   done
-
-  mkdir -p -- "$HOME/.claude" ||
-    error "出力ディレクトリを作成できません: $HOME/.claude"
-
-  (
-    cd -- "$SOURCE_ROOT"
-    find -P . -mindepth 1 \( -type f -o -type l \) \
-      "${shared_asset_find_exclusions[@]}" -print0 |
-      xargs -0 -r cp -RL --parents -t "$HOME/.claude"
-  ) || error "共有 AI rules をコピーできません: $HOME/.claude"
 }
 
 require_jq() {
@@ -239,14 +233,14 @@ merge_local_claude_settings() {
 
 conflicts=()
 
-preflight_local_install() {
+preflight_install() {
   local index
   local source
   local destination
   local current_link
   local required_directory
 
-  for ((index = 0; index < ${#sources[@]}; index += 1)); do
+  for ((index = first_link_index; index < ${#sources[@]}; index += 1)); do
     source=${sources[$index]}
     destination=${destinations[$index]}
 
@@ -281,16 +275,7 @@ link_install_items() {
   local source
   local destination
 
-  preflight_local_install
-
-  mkdir -p -- "${required_directories[@]}" ||
-    error '出力ディレクトリを作成できません。'
-
-  case $target in
-    claude | all) merge_local_claude_settings ;;
-  esac
-
-  for ((index = 0; index < ${#sources[@]}; index += 1)); do
+  for ((index = first_link_index; index < ${#sources[@]}; index += 1)); do
     source=${sources[$index]}
     destination=${destinations[$index]}
 
@@ -298,17 +283,31 @@ link_install_items() {
       continue
     fi
 
-    ln -s -- "$source" "$destination" ||
+    ln -sn -- "$source" "$destination" ||
       error "シンボリックリンクを作成できません: $destination"
   done
 }
 
 build_install_plan
+first_link_index=0
+if [[ $environment = cloud ]]; then
+  first_link_index=${#sources[@]}
+fi
+readonly first_link_index
+append_codex_skill_mappings
+preflight_install
+mkdir -p -- "${required_directories[@]}" ||
+  error '出力ディレクトリを作成できません。'
 
 case $environment in
   cloud) copy_install_items ;;
-  local) link_install_items ;;
+  local)
+    case $target in
+      claude | all) merge_local_claude_settings ;;
+    esac
+    ;;
 esac
+link_install_items
 
 printf 'AI rules を environment=%s target=%s としてインストールしました。\n' \
   "$environment" "$target"

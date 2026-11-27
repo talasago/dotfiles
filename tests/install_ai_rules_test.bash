@@ -49,12 +49,17 @@ test_local_all_installs_claude_and_codex_links() {
   local test_home
   test_home=$(new_home)
   mkdir -p -- "$test_home/.claude/skills/local-only"
+  mkdir -p -- "$test_home/.agents/skills/codex-only"
   printf 'local only\n' >"$test_home/.claude/skills/local-only/SKILL.md"
+  printf 'codex only\n' >"$test_home/.agents/skills/codex-only/SKILL.md"
 
   HOME=$test_home "$INSTALLER" --environment local --target all >/dev/null
 
   assert_symlink_to "$REPOSITORY_ROOT/CLAUDE.md" "$test_home/.claude/CLAUDE.md"
   assert_symlink_to "$REPOSITORY_ROOT/AGENTS.md" "$test_home/.codex/AGENTS.md"
+  assert_symlink_to "$REPOSITORY_ROOT/.claude/skills/write-test" "$test_home/.agents/skills/write-test"
+  assert_absent "$test_home/.agents/skills/local-only"
+  assert_regular_file "$test_home/.agents/skills/codex-only/SKILL.md"
   assert_symlink_to \
     "$REPOSITORY_ROOT/.claude/agents/research.md" \
     "$test_home/.claude/agents/research.md"
@@ -83,7 +88,8 @@ test_local_codex_does_not_install_claude_settings() {
   assert_symlink_to \
     "$REPOSITORY_ROOT/.claude/skills/write-test/SKILL.md" \
     "$test_home/.claude/skills/write-test/SKILL.md"
-  assert_absent "$test_home/.claude/CLAUDE.md"
+  assert_symlink_to "$REPOSITORY_ROOT/CLAUDE.md" "$test_home/.claude/CLAUDE.md"
+  assert_symlink_to "$REPOSITORY_ROOT/.claude/skills/write-test" "$test_home/.agents/skills/write-test"
   assert_absent "$test_home/.claude/settings.json"
   assert_absent "$test_home/.claude/settings.local.json"
 }
@@ -119,6 +125,7 @@ test_local_claude_preserves_local_settings() {
   ' "$test_home/.claude/settings.json" ||
     fail '共通設定と端末固有設定が正しくマージされていません。'
   assert_absent "$test_home/.codex/AGENTS.md"
+  assert_absent "$test_home/.agents/skills"
 }
 
 test_local_claude_merges_permissions_with_shared_default_mode() {
@@ -179,6 +186,43 @@ test_local_reinstall_is_idempotent() {
 
   assert_symlink_to "$REPOSITORY_ROOT/CLAUDE.md" "$test_home/.claude/CLAUDE.md"
   assert_symlink_to "$REPOSITORY_ROOT/AGENTS.md" "$test_home/.codex/AGENTS.md"
+  assert_symlink_to "$REPOSITORY_ROOT/.claude/skills/write-test" "$test_home/.agents/skills/write-test"
+}
+
+test_codex_home_is_respected() {
+  local test_home
+  test_home=$(new_home)
+
+  HOME=$test_home CODEX_HOME="$test_home/custom codex" \
+    "$INSTALLER" --environment local --target codex >/dev/null
+
+  assert_symlink_to "$REPOSITORY_ROOT/AGENTS.md" "$test_home/custom codex/AGENTS.md"
+  assert_absent "$test_home/.codex/AGENTS.md"
+  assert_symlink_to "$REPOSITORY_ROOT/.claude/skills/write-test" "$test_home/.agents/skills/write-test"
+}
+
+test_codex_skill_collision_does_not_partially_install() {
+  local environment
+  local test_home
+  local command_output
+  for environment in local cloud; do
+    test_home=$(new_home)
+    mkdir -p -- "$test_home/.agents/skills/write-test"
+    printf 'personal skill\n' >"$test_home/.agents/skills/write-test/SKILL.md"
+
+    command_output=$(
+      HOME=$test_home "$INSTALLER" --environment "$environment" --target codex 2>&1
+    ) && fail "既存スキルと競合するインストールが成功しました: $environment"
+
+    case $command_output in
+      *"$test_home/.agents/skills/write-test"*) ;;
+      *) fail '競合したスキルのパスが表示されていません。' ;;
+    esac
+    [[ $(cat "$test_home/.agents/skills/write-test/SKILL.md") = 'personal skill' ]] ||
+      fail '既存スキルが変更されています。'
+    assert_absent "$test_home/.codex/AGENTS.md"
+    assert_absent "$test_home/.claude/CLAUDE.md"
+  done
 }
 
 test_local_collision_does_not_partially_install() {
@@ -250,6 +294,8 @@ test_cloud_all_copies_regular_files() {
   cmp -s "$REPOSITORY_ROOT/CLAUDE.md" "$test_home/.claude/CLAUDE.md" ||
     fail 'cloud の再実行でコピー内容が更新されていません。'
   assert_regular_file "$test_home/.codex/AGENTS.md"
+  assert_symlink_to "$test_home/.claude/skills/write-test" "$test_home/.agents/skills/write-test"
+  assert_regular_file "$test_home/.agents/skills/write-test/SKILL.md"
   assert_regular_file "$test_home/.claude/settings.json"
   ! grep -q claudeMdExcludes "$test_home/.claude/settings.json" ||
     fail 'cloud の設定に local 専用の claudeMdExcludes が含まれています。'
@@ -265,7 +311,8 @@ test_cloud_compatibility_wrapper_preserves_codex_behavior() {
 
   assert_regular_file "$test_home/.codex/AGENTS.md"
   assert_regular_file "$test_home/.claude/agents/research.md"
-  assert_absent "$test_home/.claude/CLAUDE.md"
+  assert_regular_file "$test_home/.claude/CLAUDE.md"
+  assert_symlink_to "$test_home/.claude/skills/write-test" "$test_home/.agents/skills/write-test"
   assert_absent "$test_home/.claude/settings.json"
   assert_absent "$test_home/.claude/settings.local.json"
 }
@@ -301,6 +348,8 @@ test_local_claude_preserves_local_settings
 test_local_claude_merges_permissions_with_shared_default_mode
 test_local_claude_uses_shared_settings_when_local_keys_are_absent
 test_local_reinstall_is_idempotent
+test_codex_home_is_respected
+test_codex_skill_collision_does_not_partially_install
 test_local_collision_does_not_partially_install
 test_local_wrong_link_does_not_partially_install
 test_local_parent_collision_does_not_partially_install
