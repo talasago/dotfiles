@@ -1,6 +1,6 @@
 ---
+name: update-dotfiles
 description: CLAUDE.md・ルール・スキル等の新設や変更が必要になったとき、その内容がこのプロジェクト固有かグローバル（全プロジェクト共通）かを判断し、グローバルなら talasago/dotfiles にPRを送る。
-when_to_use: 作業中に「これはこのプロジェクトだけでなく他のプロジェクトにも当てはまる運用ルールだ」と気づいたとき、あるいはグローバル設定（/root/.claude/ 配下）を変更しようとしているとき
 ---
 
 # update-dotfiles

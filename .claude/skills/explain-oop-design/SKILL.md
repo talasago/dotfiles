@@ -1,13 +1,11 @@
 ---
+name: explain-oop-design
 description: 実務コードを読み、SOLID原則とデザインパターンのどれがどこに当てはまるかを学習目的で解説する。直すならどう書くかも示すが、直すべきかの判断はしない。
-when_to_use: SOLID的にどう、どのデザパタ、OOPの観点で解説して、explain-oop-design
-argument-hint: "[ファイルパス or ディレクトリ]"
-allowed-tools: Read Grep Glob
 ---
 
 # explain-oop-design
 
-`$ARGUMENTS` のコードを読み、SOLID原則とデザインパターンの観点で解説する。目的はユーザーの学習であり、コードの良し悪しの判定ではない。
+指定されたファイルやディレクトリのコードを読み、SOLID原則とデザインパターンの観点で解説する。目的はユーザーの学習であり、コードの良し悪しの判定ではない。
 
 ## 観点
 

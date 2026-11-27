@@ -1,6 +1,6 @@
 ---
-description: 実装したdiffについて時間計算量・空間計算量に変更があるかを確認し、報告する。改善案は提案しない。
-when_to_use: コードレビューを行うとき（/code-review実行時を含む）、「レビューして」等の依頼を受けたとき、report-complexity-diff
+name: report-complexity-diff
+description: コードレビューで、実装差分によって時間計算量・空間計算量が変わるかを確認し、報告する。
 ---
 
 # report-complexity-diff

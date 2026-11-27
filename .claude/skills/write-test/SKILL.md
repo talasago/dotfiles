@@ -1,6 +1,6 @@
 ---
+name: write-test
 description: テストを新規作成・追加・修正するとき。フレームワークに依存しないテスト設計と品質方針を適用する。
-when_to_use: テストを書いて、テストを追加して、テストケースを作って、write-test
 ---
 
 # write-test

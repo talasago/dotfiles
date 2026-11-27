@@ -1,8 +1,6 @@
 ---
+name: herdr-sub-session
 description: herdrの別タブにClaudeのサブセッションを立ててタスクを任せ、結果を回収する。サブセッションは許可ダイアログを出さない設定で動かし、許可が必要な操作はメインセッションが引き取る。
-when_to_use: herdr内（HERDR_ENV=1）で、様子を見たい・途中で介入したい・長時間かかる・コードを編集するタスクを別セッションに任せるとき。herdrでサブセッションを立てて、別タブでClaudeに任せて、herdr-sub-session
-argument-hint: "<name> <investigate|implement|review> <指示>"
-allowed-tools: Bash(herdr *), Bash(git worktree *)
 ---
 
 # herdr-sub-session

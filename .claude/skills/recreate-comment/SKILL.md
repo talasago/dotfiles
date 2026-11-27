@@ -1,6 +1,6 @@
 ---
+name: recreate-comment
 description: 投稿済みのGitHubのIssueコメント・PRコメント・Issue本文がまずい内容だったと気づいたときの訂正手順。編集ではなくdelete→createでやり直す。
-when_to_use: 投稿済みのGitHub Issueコメント・PRコメント・Issue本文の内容がまずかった、書くべきでなかったと気づいたとき、recreate-comment
 ---
 
 # recreate-comment

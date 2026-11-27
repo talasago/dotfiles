@@ -1,6 +1,6 @@
 ---
+name: playwright-screenshot
 description: Playwright等のヘッドレスブラウザでアプリの画面をスクリーンショット撮影するとき。撮影前に外部リソース（Webフォント等）の読み込み状態を確認し、フォールバック描画のまま撮影してしまうことを防ぐ。
-when_to_use: スクリーンショットを撮って、画面を撮影して、Playwrightで撮って、playwright-screenshot
 ---
 
 # playwright-screenshot

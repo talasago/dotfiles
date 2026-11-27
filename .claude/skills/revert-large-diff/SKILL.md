@@ -1,6 +1,6 @@
 ---
+name: revert-large-diff
 description: 実装済みの差分の大部分を取り消すとき。ファイルを1行ずつEditで手戻りさせる前に、git差分でファイル単位の復元ができないか確認する。
-when_to_use: 変更を大部分元に戻して、実装を大きく取り消して、元のブランチの状態に戻して、revert-large-diff
 ---
 
 # revert-large-diff

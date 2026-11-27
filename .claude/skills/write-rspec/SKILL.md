@@ -1,6 +1,6 @@
 ---
-description: RSpecでテストを新規作成・追加・修正するとき。RSpec、Rails、Shoulda Matchersの規約を適用する。
-when_to_use: RSpec、Rails、spec、Shoulda Matchers、rspec-parameterized、write-rspec
+name: write-rspec
+description: RSpec でテストを新規作成・追加・修正するとき。Rails、Shoulda Matchers、rspec-parameterized の規約を適用する。
 ---
 
 # write-rspec

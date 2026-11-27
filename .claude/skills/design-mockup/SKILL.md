@@ -1,6 +1,6 @@
 ---
-description: Issue等がClaude Designのモックアップ（claude.ai/design/p/...のURL）を参照しているとき、DesignSyncツールでデザインの一次情報を取得する。WebFetchは使わない。
-when_to_use: デザイン原本を確認して、モックアップに合わせて実装して、claude.ai/designのURLが参照されているとき、design-mockup
+name: design-mockup
+description: Issue 等が参照する Claude Design のモックアップ（claude.ai/design/p/...）を実装やレビューで照合するとき、DesignSync でデザインの原本を取得する。
 ---
 
 # design-mockup

@@ -1,6 +1,6 @@
 ---
+name: multi-hypothesis-bugfix
 description: バグ報告が原因の仮説を複数挙げているときのPR本文の書き方。採用した仮説だけでなく、検証した他の仮説と不採用理由も明記する。
-when_to_use: 複数の原因仮説があるバグを修正して、バグ報告に複数の仮説が書かれているとき、multi-hypothesis-bugfix
 ---
 
 # multi-hypothesis-bugfix

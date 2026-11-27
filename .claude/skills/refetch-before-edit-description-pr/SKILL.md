@@ -1,6 +1,6 @@
 ---
+name: refetch-before-edit-description-pr
 description: 投稿済みのGitHub PR本文・Issue本文・コメントを更新するとき、更新の直前に現在の本文を取得し直し、他者の編集を消さないようにする。
-when_to_use: 既存のPR本文（description）・Issue本文・コメントを gh pr edit / gh issue edit / gh api PATCH などで更新する、PRのdescriptionを書き換える、refetch-before-edit-description-pr
 ---
 
 # refetch-before-edit-description-pr

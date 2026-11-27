@@ -1,6 +1,6 @@
 ---
-description: Vitestでテストを新規作成・追加・修正するとき。TypeScriptのテスト構造、命名、配置規則を適用する。
-when_to_use: Vitest、TypeScript、*.test.ts、*.test.tsx、it.each、describe.each
+name: write-vitest
+description: Vitest でテストを新規作成・追加・修正するとき。*.test.ts、*.test.tsx、it.each、describe.each に関する構造・命名・配置規則を適用する。
 ---
 
 # write-vitest

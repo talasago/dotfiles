@@ -1,6 +1,6 @@
 ---
+name: create-issue
 description: GitHub Issue・SubIssueを作成するとき。既存Issueの事前確認と、SubIssueの分割原則（1成果物・依存最小・レビュー可能な最小単位）を適用する。
-when_to_use: Issueを作って、Issueを起票して、SubIssueに分割して、create-issue
 ---
 
 # create-issue
